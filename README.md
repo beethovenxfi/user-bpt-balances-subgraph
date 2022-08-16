@@ -1,3 +1,3 @@
-# ERC20 subgraph
+# User BPT balances subgraph
 
-Work in progress. Do not use.
+Work in progress.
