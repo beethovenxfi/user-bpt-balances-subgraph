@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: WeightedPoolFactory
-    network: fantom
+    network: optimism
     source:
-      address: '0x60467cb225092cE0c989361934311175f437Cf53'
+      address: '0xdAE7e32ADc5d490a43cCba1f0c736033F2b4eFca'
       abi: PoolFactory
-      startBlock: 16897200
+      startBlock: 8609739
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -26,11 +26,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: WeightedPool2TokenFactory
-    network: fantom
+    network: optimism
     source:
-      address: '0x92b377187bcCC6556FceD2f1e6DAd65850C20630'
+      address: '0x0F3e0c4218b7b0108a3643cFe9D3ec0d4F57c54e'
       abi: PoolFactory
-      startBlock: 16897244
+      startBlock: 8856751
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -48,11 +48,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: StablePoolFactory
-    network: fantom
+    network: optimism
     source:
-      address: '0x55df810876354Fc3e249f701Dd78DeDE57991F8D'
+      address: '0x41B953164995c11C81DA73D212ED8Af25741b7Ac'
       abi: PoolFactory
-      startBlock: 16897287
+      startBlock: 8856751
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -69,12 +69,12 @@ dataSources:
         - event: PoolCreated(indexed address)
           handler: handleNewPool
   - kind: ethereum/contract
-    name: StablePhantomPoolFactory
-    network: fantom
+    name: StablePoolV2Factory
+    network: optimism
     source:
-      address: '0x0e2afa0b5f9174750d4e84bf9798f89b79bd5bf4'
+      address: '0xeb151668006CD04DAdD098AFd0a82e78F77076c3'
       abi: PoolFactory
-      startBlock: 28658436
+      startBlock: 12023582
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -92,11 +92,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: MetaStablePoolFactory
-    network: fantom
+    network: optimism
     source:
-      address: '0x70b55Af71B29c5Ca7e67bD1995250364C4bE5554'
+      address: '0xb08E16cFc07C684dAA2f93C70323BAdb2A6CBFd2'
       abi: PoolFactory
-      startBlock: 16898079
+      startBlock: 18855470
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -115,12 +115,12 @@ dataSources:
   - kind: ethereum/contract
     name: ChildChainLiquidityGaugeFactory
     # prettier-ignore
-    network: fantom
+    network: optimism
     source:
-      address: '0x0000000000000000000000000000000000000000'
+      address: '0x2E96068b3D5B5BAE3D7515da4A1D2E52d08A2647'
       abi: ChildChainLiquidityGaugeFactory
       # prettier-ignore
-      startBlock: 40000000
+      startBlock: 9112420
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -141,11 +141,11 @@ dataSources:
           handler: handleRewardsOnlyGaugeCreated
   - kind: ethereum/contract
     name: MasterChefV2
-    network: fantom
+    network: optimism
     source:
-      address: "0x8166994d9ebBe5829EC86Bd81258149B87faCfd3"
+      address: "0x0000000000000000000000000000000000000000"
       abi: MasterChefV2
-      startBlock: 18508347
+      startBlock: 9112420
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -171,7 +171,7 @@ templates:
   # These data sources templates exist to support the different flags that a token could specify
   - name: StandardToken
     kind: ethereum/contract
-    network: fantom
+    network: optimism
     source:
       abi: ERC20
     mapping:
@@ -190,7 +190,7 @@ templates:
   - kind: ethereum/contract
     name: RewardsOnlyGauge
     # prettier-ignore
-    network: fantom
+    network: optimism
     source:
       abi: RewardsOnlyGauge
     mapping:

@@ -4,15 +4,18 @@
   "private": true,
   "scripts": {
     "auth": "graph auth https://api.thegraph.com/deploy/",
-    "codegen": "graph codegen",
+    "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ graphprotocol/erc20-subgraph",
+    "deploy:optimism": "graph deploy danielmkm/bpt-balances subgraph.optimism.yaml --product hosted-service",
+    "deploy:fantom": "graph deploy danielmkm/user-balances-fantom subgraph.yaml --product hosted-service",
+    "deploy:arbitrum": "graph deploy danielmkm/user-balance-arbitrum subgraph.arbitrum.yaml --product hosted-service",
     "create-local": "graph create --node http://localhost:8020/ graphprotocol/erc20-subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ graphprotocol/erc20-subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 graphprotocol/erc20-subgraph"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "0.18.0",
-    "@graphprotocol/graph-ts": "0.18.1"
+    "@graphprotocol/graph-cli": "^0.25.0",
+    "@graphprotocol/graph-ts": "^0.24.1",
+    "prettier": "^2.7.1"
   }
 }

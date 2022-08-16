@@ -1,32 +1,40 @@
-#
-# Provides information about an Ethereum account
-#
-type Account @entity {
-  " Equals to: <accountAddress>"
+# A unique address is referred to as a user
+type User @entity {
+  " Equals to: <userAddress>"
   id: ID!
 
-  " Account address "
+  " User address "
   address: Bytes!
 
-  " Token balances that this account holds "
-  balances: [AccountBalance!]! @derivedFrom(field: "account")
+  walletTokens: [Bytes!]!
+  gauges: [Bytes!]!
+  farms: [String!]!
+
+  " Token balances that this user holds in their wallet "
+  walletBalances: [UserWalletBalance!]! @derivedFrom(field: "user")
+
+  " Token balances that this user has staked in gauges"
+  gaugeBalances: [UserGaugeBalance!]! @derivedFrom(field: "user")
+
+  " Token balances that this user has staked in farms"
+  farmBalances: [UserMasterChefFarmBalance!]! @derivedFrom(field: "user")
 }
 
 #
 # Current token balance of a particular Ethereum account
 #
-type AccountBalance @entity {
+type UserWalletBalance @entity {
   " Equals to: <accountAddress>-<tokenAddress>"
   id: ID!
 
   " Account address "
-  account: Account!
+  user: User!
 
   " Token address "
   token: Token!
 
   " Current account balance "
-  amount: BigDecimal!
+  balance: BigDecimal!
 
   " Block number in which the balance was last modified "
   block: BigInt
@@ -39,39 +47,33 @@ type AccountBalance @entity {
 }
 
 #
-# Token balance of a particular Ethereum account in a certain timestamp. This entity is used to
-# provide information about evolution of account balances
+# Token balance of a particular user at a certain timestamp. This entity is used to
+# provide information about evolution of user balances
 #
-type AccountBalanceSnapshot @entity {
-  " Equals to: <accountAddress>-<tokenAddress>-<timestamp>"
+type UserBalanceSnapshot @entity {
+  " Equals to: <userAddress>-<dayTimestamp>"
   id: ID!
 
   " Account address "
-  account: Account!
+  user: User!
 
-  " Token addess "
-  token: Token!
+  " Timestamp in seconds, rounded down to the closest day "
+  timestamp: Int!
 
-  " Account balance "
-  amount: BigDecimal!
+  walletTokens: [Bytes!]!
+  walletBalances: [BigDecimal!]!
 
-  # TODO: Add description and check if could be non-optional
-  event: TokenEvent
+  gauges: [Bytes!]!
+  gaugeBalances: [BigDecimal!]!
 
-  " Block number "
-  block: BigInt!
-
-  " Timestamp in seconds "
-  timestamp: BigInt!
-
-  " Transaction hash "
-  transaction: Bytes!
+  farms: [String!]!
+  farmBalances: [BigDecimal!]!
 }
 
 #
 # Provides information about an ERC20 token
 #
-type Token @entity {
+type Token @entity(immutable: true) {
   id: ID!
 
   " Token address "
@@ -85,45 +87,6 @@ type Token @entity {
 
   " Symbol of the token "
   symbol: String!
-
-  " Token description "
-  description: String
-
-  " Image URL "
-  imageUrl: String
-
-  " Token flags"
-  flags: [String!]!
-
-  " If token transfers are paused "
-  paused: Boolean
-
-  # TODO: Number of token holders
-  # holderCount: BigInt!
-
-  " Total number of events (all types)"
-  eventCount: BigInt!
-
-  " Total number of burn events "
-  burnEventCount: BigInt!
-
-  " Total number of mint events "
-  mintEventCount: BigInt!
-
-  " Total number of transfer events "
-  transferEventCount: BigInt!
-
-  " Total token supply "
-  totalSupply: BigDecimal!
-
-  " Total token burned "
-  totalBurned: BigDecimal!
-
-  " Total token minted "
-  totalMinted: BigDecimal!
-
-  " Total token transferred "
-  totalTransferred: BigDecimal!
 
   " List of token events "
   events: [TokenEvent!]! @derivedFrom(field: "token")
@@ -143,60 +106,7 @@ interface TokenEvent {
   transaction: Bytes!
 }
 
-type BurnEvent implements TokenEvent @entity {
-  id: ID!
-
-  " Token address "
-  token: Token!
-
-  " Quantity of tokens burned "
-  amount: BigDecimal!
-
-  " Transaction sender address "
-  sender: Bytes!
-
-  " Address of burner account "
-  burner: Bytes!
-
-  " Block number "
-  block: BigInt!
-
-  " Event timestamp "
-  timestamp: BigInt!
-
-  " Transaction hash "
-  transaction: Bytes!
-}
-
-type MintEvent implements TokenEvent @entity {
-  id: ID!
-
-  " Token address "
-  token: Token!
-
-  " Quantity of tokens minted "
-  amount: BigDecimal!
-
-  " Transaction sender address "
-  sender: Bytes!
-
-  " Address of minter account "
-  minter: Bytes!
-
-  " Address of destination account "
-  destination: Bytes!
-
-  " Block number "
-  block: BigInt!
-
-  " Event timestamp "
-  timestamp: BigInt!
-
-  " Transaction hash "
-  transaction: Bytes!
-}
-
-type TransferEvent implements TokenEvent @entity {
+type TransferEvent implements TokenEvent @entity(immutable: true) {
   id: ID!
 
   " Token address "
@@ -224,27 +134,44 @@ type TransferEvent implements TokenEvent @entity {
   transaction: Bytes!
 }
 
-type PauseEvent implements TokenEvent @entity {
+type Gauge @entity(immutable: true) {
   id: ID!
-
-  " Token address "
+  symbol: String!
+  " Token addess "
   token: Token!
 
-  " Greater than zero if token is paused "
-  amount: BigDecimal!
-
-  " Transaction sender address "
-  sender: Bytes!
-
-  " Address of pauser account "
-  pauser: Bytes!
-
-  " Block number "
-  block: BigInt!
-
-  " Event timestamp "
-  timestamp: BigInt!
-
-  " Transaction hash "
-  transaction: Bytes!
+  userGaugeBalances: [UserGaugeBalance!] @derivedFrom(field: "gauge")
 }
+
+type UserGaugeBalance @entity {
+  id: ID!
+  user: User!
+  gauge: Gauge!
+  balance: BigDecimal!
+
+  " Block number in which the balance was last modified "
+  block: BigInt
+
+  " Last modified timestamp in seconds "
+  modified: BigInt
+
+  " Hash of the last transaction that modified the balance "
+  transaction: Bytes
+}
+
+
+type MasterChefFarm @entity {
+  # Index of pool in poolInfo on MasterChef contract
+  id: ID!
+  token: Token!
+
+  userFarmBalances: [UserMasterChefFarmBalance!] @derivedFrom(field: "farm")
+}
+
+type UserMasterChefFarmBalance @entity {
+  id: ID!
+  user: User!
+  farm: MasterChefFarm!
+  balance: BigDecimal!
+}
+
