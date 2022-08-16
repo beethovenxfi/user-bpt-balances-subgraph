@@ -6,43 +6,49 @@ import {
     UserWalletBalance,
 } from '../types/schema';
 import { ethereum } from '@graphprotocol/graph-ts/index';
-import { BigDecimal, Bytes, store } from '@graphprotocol/graph-ts';
+import { BigDecimal, Bytes } from '@graphprotocol/graph-ts';
 
 export function saveUserBalanceSnapshot(user: User, event: ethereum.Event): void {
     let snapshot = getOrCreateUserBalanceSnapshot(user, event);
 
-    let walletBalances = new Array<BigDecimal>(user.walletTokens.length);
-    let walletTokens = new Array<Bytes>(user.walletTokens.length);
+    let walletBalances = new Array<BigDecimal>(0);
+    let walletTokens = new Array<Bytes>(0);
 
     for (let i = 0; i < user.walletTokens.length; i++) {
         let userWalletBalance = UserWalletBalance.load(
             user.id + '-' + user.walletTokens[i].toHex(),
         ) as UserWalletBalance;
 
-        walletBalances[i] = userWalletBalance.balance;
-        walletTokens[i] = user.walletTokens[i];
+        if (userWalletBalance.balance.gt(BigDecimal.zero())) {
+            walletBalances.push(userWalletBalance.balance);
+            walletTokens.push(user.walletTokens[i]);
+        }
     }
 
-    let stakedBalances = new Array<BigDecimal>(user.gauges.length);
-    let stakedGauges = new Array<Bytes>(user.gauges.length);
+    let stakedBalances = new Array<BigDecimal>(0);
+    let stakedGauges = new Array<Bytes>(0);
 
     for (let i = 0; i < user.gauges.length; i++) {
         let userStakedBalance = UserGaugeBalance.load(user.id + '-' + user.gauges[i].toHex()) as UserGaugeBalance;
 
-        stakedBalances[i] = userStakedBalance.balance;
-        stakedGauges[i] = user.gauges[i];
+        if (userStakedBalance.balance.gt(BigDecimal.zero())) {
+            stakedBalances.push(userStakedBalance.balance);
+            stakedGauges.push(user.gauges[i]);
+        }
     }
 
-    let farms = new Array<string>(user.farms.length);
-    let farmBalances = new Array<BigDecimal>(user.farms.length);
+    let farms = new Array<string>(0);
+    let farmBalances = new Array<BigDecimal>(0);
 
     for (let i = 0; i < user.farms.length; i++) {
         let userFarmBalance = UserMasterChefFarmBalance.load(
             user.id + '-' + user.farms[i],
         ) as UserMasterChefFarmBalance;
 
-        farmBalances[i] = userFarmBalance.balance;
-        farms[i] = user.farms[i];
+        if (userFarmBalance.balance.gt(BigDecimal.zero())) {
+            farmBalances.push(userFarmBalance.balance);
+            farms.push(user.farms[i]);
+        }
     }
 
     snapshot.walletTokens = walletTokens;
