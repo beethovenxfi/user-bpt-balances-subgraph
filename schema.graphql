@@ -106,7 +106,7 @@ interface TokenEvent {
   transaction: Bytes!
 }
 
-type TransferEvent implements TokenEvent @entity(immutable: true) {
+type TokenTransferEvent implements TokenEvent @entity(immutable: true) {
   id: ID!
 
   " Token address "

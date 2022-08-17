@@ -1,7 +1,7 @@
 import { BigDecimal, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { toDecimal } from '../helpers/number';
 import { decreaseUserBalance, getOrCreateUser, increaseUserBalance } from './user';
-import { Token, TransferEvent } from '../types/schema';
+import { Token, TokenTransferEvent } from '../types/schema';
 import { Transfer } from '../types/StablePoolFactory/ERC20';
 import { saveUserBalanceSnapshot } from './snapshot';
 import { ZERO_ADDRESS } from '../helpers/constants';
@@ -47,8 +47,8 @@ function handleTransferEvent(
     source: Bytes,
     destination: Bytes,
     event: ethereum.Event,
-): TransferEvent {
-    let transferEvent = new TransferEvent(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+): TokenTransferEvent {
+    let transferEvent = new TokenTransferEvent(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
     transferEvent.token = event.address.toHex();
     transferEvent.amount = amount;
     transferEvent.sender = source;

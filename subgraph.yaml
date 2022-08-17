@@ -114,12 +114,10 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: ChildChainLiquidityGaugeFactory
-    # prettier-ignore
     network: fantom
     source:
       address: '0x0000000000000000000000000000000000000000'
       abi: ChildChainLiquidityGaugeFactory
-      # prettier-ignore
       startBlock: 40000000
     mapping:
       kind: ethereum/events
@@ -168,7 +166,6 @@ dataSources:
         - event: LogPoolAddition(indexed uint256,uint256,indexed address,indexed address)
           handler: masterchefLogFarmAddition
 templates:
-  # These data sources templates exist to support the different flags that a token could specify
   - name: StandardToken
     kind: ethereum/contract
     network: fantom
@@ -189,7 +186,6 @@ templates:
           handler: handleTransfer
   - kind: ethereum/contract
     name: RewardsOnlyGauge
-    # prettier-ignore
     network: fantom
     source:
       abi: RewardsOnlyGauge
